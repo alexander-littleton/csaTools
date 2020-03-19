@@ -1,0 +1,24 @@
+html {
+    height: 100%;
+    background: rgb(32, 32, 32);
+}
+
+body {
+    color: darkgray;
+    text-align: center;
+    font-family: 'Glober Regular', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+}
+
+table {
+    margin: auto;
+}
+
+table,th,td {
+    border: 1px solid black;;
+}
+
+#textInputContainer {
+    display : none;
+}
