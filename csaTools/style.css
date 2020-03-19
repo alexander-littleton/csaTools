@@ -22,3 +22,8 @@ table,th,td {
 #textInputContainer {
     display : none;
 }
+
+p {
+    line-height: 150%;
+    text-align: center;
+}
