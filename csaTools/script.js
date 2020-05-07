@@ -23,7 +23,7 @@ const fileParse = function() {
 const cleanData = function(json) {
 	for (let i = 0; i < json.length; i++) {
 		for (let x = 0; x < json[i].length; x++) {
-			json[i][x] = json[i][x].replace(',', '')			
+			json[i][x] = json[i][x].replace(',', '')
 		}
 	}
 };
@@ -125,7 +125,6 @@ const addTable = function() {
 
 
 //possibly done debugging the above
-//next up is providing download buttons for just numbers and alphanumeric
 const download = function(e) {
 	let array
 	switch(e.currentTarget.downloadParam) {

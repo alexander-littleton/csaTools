@@ -1,10 +1,13 @@
 html {
     height: 100%;
-    background: rgb(32, 32, 32);
+    background-color: rgb(230, 230, 230);
+    overflow: scroll;
 }
 
+#tableWrapper {
+    display: inline-block;
+}
 body {
-    color: darkgray;
     text-align: center;
     font-family: 'Glober Regular', sans-serif;
     font-style: normal;
@@ -13,10 +16,43 @@ body {
 
 table {
     margin: auto;
+    text-align: center;
+    border-collapse: unset;
+    border-spacing: 0;
+    white-space: nowrap;
 }
 
-table,th,td {
-    border: 1px solid black;;
+th {
+    border: 1px solid gray;
+}
+
+td {
+    border: 1px solid gray;
+    padding: 3px;
+}
+.headerRow{
+    height: 30px;
+    background-color: rgb(25, 57, 76);
+    color: white;
+}
+.editPencil {
+    max-height: 15px;
+    max-width: 15px;
+}
+
+.redX {
+    max-height: 15px;
+    max-width: 15px;
+}
+
+input {
+    color: WHITE;
+    background-color: rgb(25, 57, 76); 
+    border: 1px solid gray;
+}
+
+.buttonWrapper {
+    text-align: left;
 }
 
 #textInputContainer {
@@ -26,4 +62,35 @@ table,th,td {
 p {
     line-height: 150%;
     text-align: center;
+}
+
+/* The alert message box */
+.alert {
+    padding: 20px;
+    background-color: rgb(25, 57, 76); /* Red */
+    color: white;
+    margin-bottom: 15px;
+    display: none;
+  }
+  
+  /* The close button */
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  /* When moving the mouse over the close button */
+  .closebtn:hover {
+    color: black;
+  }
+
+.addClientsWrapper {
+    display: none;
+    text-align: left;
 }
