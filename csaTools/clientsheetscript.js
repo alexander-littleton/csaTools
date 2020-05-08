@@ -32,6 +32,40 @@ let sampleTable = {
     ]
 }
 
+//builds JSON for localstorage
+const buildLocalDataObj = function(){
+    let dataArr = []
+    document.querySelectorAll('.tableContainer').forEach(tableContainer => {
+        let defaultObject = {
+            name:'',
+            columns:[],
+            rows:[]
+        }
+        
+        //Adds name to obj
+        defaultObject.name = tableContainer.querySelector('h2 span').innerText
+       
+        //Adds columns to obj
+        for (let i = 0; i < tableContainer.querySelectorAll('th').length-2; i++) {
+            const e = tableContainer.querySelectorAll('th')[i];
+            defaultObject.columns.push(e.querySelector('span').innerText)
+        }
+        
+        //Adds Rows and Cells to obj
+        let tableRows = tableContainer.querySelector('tbody').querySelectorAll('tr');
+        for (let i = 0; i < tableRows.length; i++) {
+            const e = tableRows[i];
+            let row = [];
+            for (let i2 = 0; i2 < e.querySelectorAll('span').length; i2++) {
+                const f = e.querySelectorAll('span')[i2];
+                row.push(f.innerText);
+            };
+            defaultObject.rows.push(row);
+        };
+        dataArr.push(defaultObject);
+    });
+    localStorage.setItem('scClientTables', JSON.stringify(dataArr));
+};
 
 //buildtable
 const buildTable = function(table) {
@@ -64,7 +98,10 @@ const buildTable = function(table) {
             const tableID = $(this).data('tableID')
             $(`.t${tableID}Checkbox:checkbox:checked`).siblings('.editable').text(newdate);
             $(`#t${tableID}`).find(`input[type='checkbox']`).prop('checked',false)
+
+            buildLocalDataObj()
         });
+
     $(`#t${tableCount}buttonWrapper`).append(scButton);
 
     //addrows button + unhide client input on click
@@ -108,8 +145,14 @@ const buildTable = function(table) {
     $(`#t${tableCount}Header`).append($(`<tr class="t${tableCount}HeaderRow headerRow">`));
     
     //builds header row
+    let clmcount = 0
     table.columns.forEach(e => {
+        if (clmcount!=0){
         $(`.t${tableCount}HeaderRow`).append($(`<th class="column"><span class='editable'>${e}</span><img src='assets/editPencil.png' class='editPencil'><img src="assets/redX.png" class="redX delColumn"></th>`));
+        } else {
+            $(`.t${tableCount}HeaderRow`).append($(`<th class="column"><span class='editable'>${e}</span><img src='assets/editPencil.png' class='editPencil'></th>`));
+        }
+        clmcount+=1
     });
 
     //Adds select all and delete columns to header
@@ -126,7 +169,7 @@ const buildTable = function(table) {
     container.append($(`<input type="submit" class="addTable" value="Add Table">`));
 
     //Row sorting functions
-    $('th').click(function(){
+    $('th').on('click', '*:not(img)', function(){
         const table = $(this).parents('table').eq(0)
         let rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
         this.asc = !this.asc;
@@ -142,8 +185,9 @@ const buildTable = function(table) {
     function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
     //
     tableCount+=1;
+    buildLocalDataObj()
 };
-
+//end Build Table
 
 const addRow = function(rowData, tableID, notify=false){
     const columnCount = $(`#t${tableID}Header tr th`).length;
@@ -170,21 +214,26 @@ const addRow = function(rowData, tableID, notify=false){
     if (notify){
         $('.alert').css('display','block')
     }
+    buildLocalDataObj()
 };
 
  //--->make cells and column text editable > start
+ let previousString = ''
  $(document).on('click', '.editPencil', function(event){
     //make editable
+    previousString=$(this).siblings('span').text()
     $(this).siblings('span').attr('contenteditable', 'true');
     $(this).siblings('span').focus();
     $(this).siblings('span').addClass('editing');
 })
 //--->save text edits
-$(document).on('focusout', '.editable', function(event){
-    $(this).attr('contenteditable', 'false')
-    $(this).removeClass('editing');
-})
-//
+$(document).on('keydown', '.editable', function(e){ 
+    if (e.keyCode==13){
+        $(this).attr('contenteditable', 'false')
+        $(this).removeClass('editing');
+        buildLocalDataObj()
+    }
+});
 
 //selects all items in row
 $(document).on('change', '.selectAll', function(event){
@@ -197,11 +246,9 @@ $(document).on('change', '.selectAll', function(event){
     };
 });
 
-//Prevents new line when pressing enter while editing
-$(document).on('keydown', '.editable', function(e){ 
-    if (e.keyCode==13){
-        e.preventDefault()
-    }
+//Create new table button
+$(document).on('click', '.addTable', function() {
+    buildTable(sampleTable);
 });
 
 //Delete Column
@@ -211,6 +258,7 @@ $(document).on('click', '.delColumn', function(){
         const parentTable=$(this).parents('table');
         const rows = parentTable.find('tr');
         rows.children(`:nth-child(${columnIndex+1})`).remove();
+        buildLocalDataObj()
     }
 });
 
@@ -218,6 +266,7 @@ $(document).on('click', '.delColumn', function(){
 $(document).on('click', '.delRow', function() {
     if (confirm('Are you sure you want to delete this row? This action cannot be undone.')) {
         $(this).closest('tr').remove();
+        buildLocalDataObj()
     };
 });
 
@@ -225,55 +274,20 @@ $(document).on('click', '.delRow', function() {
 $(document).on('click', '.delTable', function() {
     if (confirm('Are you sure you want to delete this table? This action cannot be undone.')) {
         if (confirm('Are you absolutely sure you want to permanently delete this table?')) {
-            $(this).closest('.tableContainer').remove()
-        }
-    }
+            $(this).closest('.tableContainer').remove();
+            buildLocalDataObj()
+        };
+    };
 });
 
-const buildLocalDataObj = function(){
-    let dataArr = []
-    document.querySelectorAll('tableContainer').forEach(tableContainer => {
-        let defaultObject = {
-            name:'',
-            columns:[],
-            rows:[]
-        }
-        tableContainer.querySelector('h2').innerText
-    })
-};
+$(document).on('click','.addColumn', function(){
+    $(this)
+})
 
-const pushToLocalData = function() {
-    
-};
-
-
-
-const addColumn = function(columnName="newColumn"){
-
-}
-
-const removeColumn = function(){
-
-}
-
-const removeTable = function(){
-
-}
-
-const selectRow = function(){
-
-}
-
-//generates initial table
+//Generates table on first site visit
 if (!localData) {
     buildTable(sampleTable);
 } else {
-localData.tables.forEach(e => {
+localData.forEach(e => {
     buildTable(e)
 })};
-
-
-//Row removing function
-
-
-//Add Table Button
