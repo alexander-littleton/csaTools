@@ -227,12 +227,17 @@ const addRow = function(rowData, tableID, notify=false){
     $(this).siblings('span').addClass('editing');
 })
 //--->save text edits
+$(document).on('focusout', '.editable', function(e){ 
+    $(this).attr('contenteditable', 'false')
+    $(this).removeClass('editing');
+    buildLocalDataObj()
+});
 $(document).on('keydown', '.editable', function(e){ 
     if (e.keyCode==13){
         $(this).attr('contenteditable', 'false')
         $(this).removeClass('editing');
         buildLocalDataObj()
-    }
+    }   
 });
 
 //selects all items in row
