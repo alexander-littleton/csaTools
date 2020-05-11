@@ -40,10 +40,10 @@ const buildLocalDataObj = function(){
             name:'',
             columns:[],
             rows:[]
-        }
+        };
         
         //Adds name to obj
-        defaultObject.name = tableContainer.querySelector('h2 span').innerText
+        defaultObject.name = tableContainer.querySelector('h2 span').innerText;
        
         //Adds columns to obj
         for (let i = 0; i < tableContainer.querySelectorAll('th').length-2; i++) {
@@ -315,8 +315,9 @@ $(document).on('click','.addColumn', function(){
         .each(function() {
             $(bodyCell).insertBefore($(this).find('td:nth-last-child(2)'))
     });
+    buildLocalDataObj()
 })
-
+//
 
 //Generates table on first site visit
 if (!localData) {
