@@ -67,7 +67,7 @@ const buildLocalDataObj = function(){
     localStorage.setItem('scClientTables', JSON.stringify(dataArr));
 };
 
-//buildtable
+//Table Builder
 const buildTable = function(table) {
     $('#tableWrapper').append($(`<div class='t${tableCount}Container tableContainer'>`))
     
@@ -85,11 +85,12 @@ const buildTable = function(table) {
             let month = dateObj.getUTCMonth() + 1; //months from 1-12
             let day = dateObj.getUTCDate();
             let year = dateObj.getUTCFullYear();
-            if (month.toString.length === 1) {
+            let m = day.toString()
+            if (month.toString().length === 1) {
                 month='0'+month
             };
     
-            if (day.toString.length === 1) {
+            if (day.toString().length === 1) {
                 day='0'+day
             };
 
@@ -168,27 +169,13 @@ const buildTable = function(table) {
 
     container.append($(`<input type="submit" class="addTable" value="Add Table">`));
 
-    //Row sorting functions
-    $('th').on('click', '*:not(img)', function(){
-        const table = $(this).parents('table').eq(0)
-        let rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
-        this.asc = !this.asc;
-        if (!this.asc){rows = rows.reverse()};
-        for (let i = 0; i < rows.length; i++){table.append(rows[i])};
-    });
-    function comparer(index) {
-        return function(a, b) {
-            const valA = getCellValue(a, index), valB = getCellValue(b, index)
-            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
-        }
-    }
-    function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
-    //
     tableCount+=1;
     buildLocalDataObj()
 };
 //end Build Table
 
+
+//Add Row
 const addRow = function(rowData, tableID, notify=false){
     const columnCount = $(`#t${tableID}Header tr th`).length;
     $(`#t${tableID}Body`).append($(`<tr class='t${tableID}row'>`));
@@ -216,6 +203,7 @@ const addRow = function(rowData, tableID, notify=false){
     }
     buildLocalDataObj()
 };
+//end Add Row
 
  //--->make cells and column text editable > start
  let previousString = ''
@@ -239,6 +227,24 @@ $(document).on('keydown', '.editable', function(e){
         buildLocalDataObj()
     }   
 });
+//
+
+//Row sorting functions
+$(document).on('click', 'th', function(){
+    const table = $(this).parents('table').eq(0)
+    let rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+    this.asc = !this.asc;
+    if (!this.asc){rows = rows.reverse()};
+    for (let i = 0; i < rows.length; i++){table.append(rows[i])};
+});
+function comparer(index) {
+    return function(a, b) {
+        const valA = getCellValue(a, index), valB = getCellValue(b, index)
+        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+    }
+}
+function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
+//
 
 //selects all items in row
 $(document).on('change', '.selectAll', function(event){
@@ -285,9 +291,32 @@ $(document).on('click', '.delTable', function() {
     };
 });
 
+//Add Column
 $(document).on('click','.addColumn', function(){
-    $(this)
+    const table = $(this).parents('.buttonWrapper').siblings('table');
+    const tableID = $(this).siblings('.submitChanges').data('tableID');
+    const headerCell=   `<th class="column">`+
+                            `<span class='editable'>New Column</span>`+
+                            `<img src='assets/editPencil.png' class='editPencil'>`+
+                            `<img src="assets/redX.png" class="redX delColumn">`+
+                        `</th>`;
+    
+    const bodyCell= `<td>`+
+                        `<span class='editable'>--</span>`+
+                        `<img src='assets/editPencil.png' class='editPencil'>`+
+                        `<input type='checkbox' class='t${tableID}Checkbox'>`+
+                    `</td>`;
+    
+    $(headerCell).insertBefore(table.find('thead tr th:nth-last-child(2)'))
+    
+    table
+        .find('tbody')
+        .find('tr')
+        .each(function() {
+            $(bodyCell).insertBefore($(this).find('td:nth-last-child(2)'))
+    });
 })
+
 
 //Generates table on first site visit
 if (!localData) {
