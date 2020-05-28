@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="qaToolStyle.css">
+    <title>Alphanumeric Query Analysis Tool</title>
+</head>
+<body>
+    <h1>Query Analysis Tool</h1>
+    <input type="file" id="openFile" accept=".csv"/>
+    <div id='textInputContainer'>
+        <textarea id="termsInput" placeholder="Paste top terms here"></textarea>
+    </div>
+    <button type="submit" id='submitFile'>Submit</button>
+    <div id='tableWrapper'>
+        <h2>Alphanumeric</h2>
+        <table id="numberTable" class='qaTable'>
+            <thead>
+                <tr id='titleRow' class='headerRow'>
+                    <th>Query Type</th>
+                    <th>Impressions</th>
+                    <th>Clicks</th>
+                    <th>Cost</th>
+                    <th>Conversions</th>
+                    <th>Conv. Value</th>
+                    <th>ROAS</th>
+                    <th>Avg. CPC</th>
+                    <th>AOV</th>
+                    <th>CTR</th>
+                    <th>CVR</th>
+                    <th>Export Lists</th>
+                </tr>
+            <thead>
+            <tbody>
+                <tr id="alphaRow">
+                    <td><strong>Alphanumeric</strong></td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td><button id='alphaNumericDownload'>Download</button></td>
+                </tr>
+                <tr id="numRow">
+                    <td>Just Numbers</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td><button id="numericDownload">Download</button></td>
+                </tr>
+                <tr id="nonNumRow">
+                    <td>Non-Numbered</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td><button id="numericDownload">Download</button></td>
+                </tr>
+                <tr id="totalRow">
+                    <td>All Terms</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h3>How to use</h3>
+    <p>Format your .csv file so that the data is in the following order:<br>
+        <strong>Search terms | Impressions | Clicks | Cost | Conversions | Conversion Value</strong><br>
+        Delete any extra rows above your headers/data (Headers are optional)<br>
+        Once your .csv file is formatted, go ahead and upload it then click submit to run.<br>
+
+
+    </p>
+</body>
+<footer>
+    <script type="text/javascript" src="papaparse.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+</footer>
