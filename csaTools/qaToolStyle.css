@@ -1,0 +1,61 @@
+html {
+    height: 100%;
+    background-color: rgb(230, 230, 230);
+}
+
+body {
+    text-align: center;
+    font-family: 'Glober Regular', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+}
+th {
+    border: 1px solid gray;
+}
+
+table{
+    margin: auto;
+    border-collapse: unset;
+    border-spacing: 0;
+    white-space: normal;
+}
+td {
+    border: 1px solid gray;
+    padding: 3px;
+    font-size: 14px;
+}
+
+.tableWrapper {
+    align-items: center;
+}
+.headerRow{
+    height: 30px;
+    background-color: rgb(25, 57, 76);
+    color: white;
+    font-size: 14px;
+}
+
+input {
+    color: WHITE;
+    background-color: rgb(25, 57, 76); 
+    border: 1px solid gray;
+}
+
+.buttonWrapper {
+    text-align: left;
+    width: 95%;
+    margin: auto;
+}
+
+#textInputContainer {
+    display : none;
+}
+
+p {
+    line-height: 150%;
+    text-align: center;
+}
+
+td:first-child{
+    font-weight: bold;
+}
