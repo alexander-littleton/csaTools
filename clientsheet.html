@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+  <link rel="stylesheet" href="clientsheet-style.css" />
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=UA-168021019-1"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "UA-168021019-1");
+  </script>
+</head>
+<body>
+  <div class="alert" style="display: none">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';"
+      >&times;</span
+    >
+    This is an alert box.
+  </div>
+  <div id="tableWrapper"></div>
+</body>
+<footer>
+  <script src="jquery-3.5.0.min.js"></script>
+  <script src="clientsheetscript.js"></script>
+</footer>
