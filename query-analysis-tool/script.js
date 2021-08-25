@@ -35,7 +35,6 @@ const main = function (parsedData, header = true) {
   let alphaNumRow = createRow("Alphanumeric", true);
   let justNumRow = createRow("Just Numbers", true);
   let totalsRow = createRow("All Terms", false);
-  console.log(totalsRow);
   alphaNumArray = [];
   numArray = [];
   const alphaNumRegex = /\b([a-zA-Z]+\d+|\d+[a-zA-Z]+)\b/g;
@@ -71,7 +70,6 @@ const main = function (parsedData, header = true) {
         });
       }
       alphaNumRow = addPerformanceData(alphaNumRow, performanceData);
-      console.log(alphaNumRow);
     } else if (justNumRegex.test(query)) {
       let justNumMatches = query.match(justNumRegex);
       justNumMatches.forEach((term) => {
