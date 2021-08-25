@@ -35,8 +35,6 @@ const main = function (parsedData, header = true) {
   let alphaNumRow = createRow("Alphanumeric", true);
   let justNumRow = createRow("Just Numbers", true);
   let totalsRow = createRow("All Terms", false);
-  alphaNumArray = [];
-  numArray = [];
   const alphaNumRegex = /\b([a-zA-Z]+\d+|\d+[a-zA-Z]+)\b/g;
   const justNumRegex = /\b\d+\b/g;
 
