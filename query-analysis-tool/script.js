@@ -1,107 +1,128 @@
-let data;
-const alphaNumRegex = /\b([a-zA-Z]+\d+|\d+[a-zA-Z]+)\b/g;
-const justNumRegex = /\b\d+\b/g;
-const numAlphaRow = document.getElementById("alphaRow");
-const numRow = document.getElementById("numRow");
-const numNonRow = document.getElementById("nonNumRow");
-const numTotalRow = document.getElementById("totalRow");
-const dataCellEndPos = 10;
-let alphaNumTotal = [];
-let justNumTotal = [];
-let total = [];
-let alphaNumArray = [];
-let numArray = [];
-
 const fileParse = function () {
   let input = document.getElementById("openFile").files[0];
   Papa.parse(input, {
     complete: function (results, file) {
       "Parsing complete", results, file;
-      data = results["data"];
-      cleanData(data);
-      numParse(data);
-      document.getElementById("tableWrapper").style.display = "block";
+      const data = results["data"];
+      main(cleanData(data));
     },
   });
 };
 
 const cleanData = function (json) {
-  for (let i = 0; i < json.length; i++) {
-    for (let x = 0; x < json[i].length; x++) {
-      json[i][x] = json[i][x].replace(",", "");
-    }
-  }
+  return json.map((row) => {
+    return row.map((str) => {
+      return str.replace(",", "");
+    });
+  });
 };
 
-const numParse = function (parsedData) {
-  alphaNumTotal = [0, 0, 0, 0, 0];
-  justNumTotal = [0, 0, 0, 0, 0];
-  total = [0, 0, 0, 0, 0];
+const createRow = (name, exportable) => ({
+  name: name,
+  performanceData: {
+    impressions: 0,
+    clicks: 0,
+    cost: 0.0,
+    conversions: 0.0,
+    revenue: 0.0,
+  },
+  exportable: exportable,
+});
+
+const main = function (parsedData, header = true) {
+  let alphaNumArray = [];
+  let numArray = [];
+  let alphaNumRow = createRow("Alphanumeric", true);
+  let justNumRow = createRow("Just Numbers", true);
+  let totalsRow = createRow("All Terms", false);
+  console.log(totalsRow);
   alphaNumArray = [];
   numArray = [];
+  const alphaNumRegex = /\b([a-zA-Z]+\d+|\d+[a-zA-Z]+)\b/g;
+  const justNumRegex = /\b\d+\b/g;
 
-  for (let i = 1; i < parsedData.length; i++) {
-    const e = parsedData[i][0];
-    if (alphaNumRegex.test(e)) {
-      let matchTerm = e.match(alphaNumRegex);
-      matchTerm.forEach((term) => {
-        if (alphaNumArray.indexOf(term) == -1) {
-          alphaNumArray.push(term);
+  header ? parsedData.shift() : null;
+
+  parsedData.forEach((row) => {
+    const [query, impressions, clicks, cost, conversions, revenue] = row;
+    const performanceData = {
+      impressions: parseFloat(impressions),
+      clicks: parseFloat(clicks),
+      cost: parseFloat(cost),
+      conversions: parseFloat(conversions),
+      revenue: parseFloat(revenue),
+    };
+
+    if (alphaNumRegex.test(query)) {
+      let alphaNumMatches = query.match(alphaNumRegex);
+      alphaNumMatches.forEach((ngram) => {
+        if (alphaNumArray.indexOf(ngram) == -1) {
+          alphaNumArray.push(ngram);
         }
       });
 
-      let numMatchTerm = e.match(justNumRegex);
-      if (numMatchTerm) {
-        numMatchTerm.forEach((term) => {
-          if (numArray.indexOf(term) == -1) {
-            numArray.push(term);
+      //we don't want to push into justNumTotals by design here
+      let justNumMatches = query.match(justNumRegex);
+      if (justNumMatches) {
+        justNumMatches.forEach((ngram) => {
+          if (numArray.indexOf(ngram) == -1) {
+            numArray.push(ngram);
           }
         });
       }
-      for (let y = 1; y < parsedData[i].length; y++) {
-        const f = parsedData[i][y];
-        alphaNumTotal[y - 1] += parseFloat(f);
-      }
-    } else if (justNumRegex.test(e)) {
-      let numMatchTerm = e.match(justNumRegex);
-      numMatchTerm.forEach((term) => {
+      alphaNumRow = addPerformanceData(alphaNumRow, performanceData);
+      console.log(alphaNumRow);
+    } else if (justNumRegex.test(query)) {
+      let justNumMatches = query.match(justNumRegex);
+      justNumMatches.forEach((term) => {
         if (numArray.indexOf(term) == -1) {
           numArray.push(term);
         }
       });
-      for (let y = 1; y < parsedData[i].length; y++) {
-        const f = parsedData[i][y];
-        justNumTotal[y - 1] += parseFloat(f);
-      }
+      justNumRow = addPerformanceData(justNumRow, performanceData);
     }
-    for (let y = 1; y < parsedData[i].length; y++) {
-      const f = parsedData[i][y];
-      total[y - 1] += parseFloat(f);
-    }
-  }
-  genTable();
+    totalsRow = addPerformanceData(totalsRow, performanceData);
+  });
+  genTable(alphaNumRow, justNumRow, totalsRow);
 };
 
-const genTable = function () {
-  for (let i = 0; i < dataCellEndPos; i++) {
-    let t1 = numAlphaRow.cells[i + 1];
+//object2 has to have all object1 keys
+const addPerformanceData = function (object1, object2) {
+  Object.keys(object1.performanceData).forEach((key) => {
+    object1.performanceData[key] += object2[key];
+  });
+  return object1;
+};
+
+const genTable = (alphaNumRow, justNumRow, totalsRow) => {
+  const alphaRow = document.getElementById("alphaRow");
+  const numRow = document.getElementById("numRow");
+  const nonNumRow = document.getElementById("nonNumRow");
+  const numTotalRow = document.getElementById("totalRow");
+  const dataCellEndPosition = 10;
+  const alphaNumRowValues = Object.values(alphaNumRow.performanceData);
+  const justNumRowValues = Object.values(justNumRow.performanceData);
+  const totalsRowValues = Object.values(totalsRow.performanceData);
+  for (let i = 0; i < dataCellEndPosition; i++) {
+    let t1 = alphaRow.cells[i + 1];
     let t2 = numRow.cells[i + 1];
-    let t3 = numNonRow.cells[i + 1];
+    let t3 = nonNumRow.cells[i + 1];
     let t4 = numTotalRow.cells[i + 1];
     if (i == 2 || i == 4) {
-      t1.innerText = alphaNumTotal[i].toFixed(2);
-      t2.innerText = justNumTotal[i].toFixed(2);
-      t4.innerText = total[i].toFixed(2);
+      t1.innerText = alphaNumRowValues[i].toFixed(2);
+      t2.innerText = justNumRowValues[i].toFixed(2);
+      t4.innerText = totalsRowValues[i].toFixed(2);
       t3.innerText = (
-        total[i].toFixed(2) -
-        alphaNumTotal[i].toFixed(2) -
-        justNumTotal[i].toFixed(2)
+        totalsRowValues[i].toFixed(2) -
+        alphaNumRowValues[i].toFixed(2) -
+        justNumRowValues[i].toFixed(2)
       ).toFixed(2);
     } else if (i < 5) {
-      t1.innerText = alphaNumTotal[i];
-      t2.innerText = justNumTotal[i];
-      t4.innerText = total[i];
-      t3.innerText = total[i] - alphaNumTotal[i] - justNumTotal[i];
+      t1.innerText = alphaNumRowValues[i];
+      t2.innerText = justNumRowValues[i];
+      t4.innerText = totalsRowValues[i];
+      t3.innerText =
+        totalsRowValues[i] - alphaNumRowValues[i] - justNumRowValues[i];
     }
     document.querySelectorAll("table").forEach((table) => {
       genDividends(table);
@@ -110,6 +131,7 @@ const genTable = function () {
 };
 
 const genDividends = function (table) {
+  const dataCellEndPos = 10;
   const rows = table.querySelectorAll("tr");
   rows.forEach((row) => {
     row.id;
@@ -150,7 +172,6 @@ const genDividends = function (table) {
   });
 };
 
-//possibly done debugging the above
 const download = function (e) {
   let array;
   switch (e.currentTarget.downloadParam) {
@@ -162,7 +183,6 @@ const download = function (e) {
       break;
     default:
   }
-  array;
   let csvContent = "data:text/csv;charset=utf-8," + array.join("\n");
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
