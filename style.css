@@ -1,137 +1,184 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap");
+@font-face {
+  font-family: Outrun;
+  src: local("Outrun"), url(./assets/fonts/Outrun.otf) format("woff");
+}
+
 html {
-    height: 100%;
-    background-color: rgb(230, 230, 230);
+  height: 100%;
+  background-color: #202020;
+}
+
+.NamePlate {
+  font-size: calc((0.5em + 1vmin) + (0.5em + 1vmax));
+  background: linear-gradient(45deg, #ee77d0, #008cff);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Outrun";
+  margin-top: 0.5em;
+  margin-bottom: 0.2em;
+  animation: gradient-move 5s ease infinite;
+  user-select: none;
+  cursor: pointer;
+}
+
+a {
+  border: none;
+  background: linear-gradient(to right, #ee77d0, #008cff, #e6e6e6, #e6e6e6);
+  background-size: 300%;
+  background-position-x: 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 1.3em;
+  margin-left: 0.3em;
+  margin-right: 0.3em;
+  padding: 0px 0.3em 0px 0.3em;
+  transition: background-position-x 1.3s;
+  user-select: none;
+  cursor: pointer;
+}
+a:hover {
+  background-position-x: 0%;
 }
 
 #tableWrapper {
-    display: inline-block;
+  display: inline-block;
 }
 
 body {
-    text-align: center;
-    font-family: 'Glober Regular', sans-serif;
-    font-style: normal;
-    font-weight: normal;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 tbody {
-    overflow-y: scroll;
-    scrollbar-width: 0px;
-    display: block;
-    max-height: 75vh;
-    width: 100%;
-    }
+  overflow-y: scroll;
+  scrollbar-width: 0px;
+  display: block;
+  max-height: 75vh;
+  width: 100%;
+}
 
-thead{
-    display:table;
-    width:100%;
-    table-layout:fixed;
+thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
-tbody tr{
-    display: table;
-    width:100%;
-    table-layout:fixed;
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
-th,td{
-    width:auto;
+th,
+td {
+  width: auto;
 }
 table {
-    margin: auto;
-    text-align: center;
-    border-collapse: unset;
-    border-spacing: 0;
-    white-space: normal;
-    display: block;
-    width: 95%;
+  margin: auto;
+  text-align: center;
+  border-collapse: unset;
+  border-spacing: 0;
+  white-space: normal;
+  display: block;
+  width: 95%;
 }
 
 th {
-    border: 1px solid gray;
+  border: 1px solid gray;
 }
-::-webkit-scrollbar{
-    display: none;
+::-webkit-scrollbar {
+  display: none;
 }
 
 td {
-    border: 1px solid gray;
-    padding: 3px;
-    font-size: 12px;
+  border: 1px solid gray;
+  padding: 3px;
+  font-size: 12px;
 }
 
-td:last-child,th:last-child{
-    width:20px;
-    padding: 1px;
+td:last-child,
+th:last-child {
+  width: 20px;
+  padding: 1px;
 }
 
-td:nth-last-child(2),th:nth-last-child(2){
-    width: 40px;
-    padding:1px;
+td:nth-last-child(2),
+th:nth-last-child(2) {
+  width: 40px;
+  padding: 1px;
 }
 
-.headerRow{
-    height: 30px;
-    background-color: rgb(25, 57, 76);
-    color: white;
-    font-size: 12px;
+.headerRow {
+  height: 30px;
+  background-color: rgb(25, 57, 76);
+  color: white;
+  font-size: 12px;
 }
 .editPencil {
-    max-height: 12px;
-    max-width: 12px;
+  max-height: 12px;
+  max-width: 12px;
 }
 
 .redX {
-    max-height: 12px;
-    max-width: 12px;
+  max-height: 12px;
+  max-width: 12px;
 }
 
 input {
-    color: WHITE;
-    background-color: rgb(25, 57, 76); 
-    border: 1px solid gray;
+  color: WHITE;
+  background-color: rgb(25, 57, 76);
+  border: 1px solid gray;
 }
 
 .buttonWrapper {
-    text-align: left;
-    width: 95%;
-    margin: auto;
+  text-align: left;
+  width: 95%;
+  margin: auto;
 }
 
 #textInputContainer {
-    display : none;
+  display: none;
 }
 
 p {
-    line-height: 150%;
-    text-align: center;
+  line-height: 150%;
+  text-align: center;
 }
 
 /* The alert message box */
 .alert {
-    padding: 20px;
-    background-color: rgb(25, 57, 76); /* Red */
-    color: white;
-    margin-bottom: 15px;
-    display: none;
-  }
-  
-  /* The close button */
-  .closebtn {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  /* When moving the mouse over the close button */
-  .closebtn:hover {
-    color: black;
-  }
+  padding: 20px;
+  background-color: rgb(25, 57, 76); /* Red */
+  color: white;
+  margin-bottom: 15px;
+  display: none;
+}
+
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
 
 .addClientsWrapper {
-    display: none;
-    text-align: left;
+  display: none;
+  text-align: left;
 }
