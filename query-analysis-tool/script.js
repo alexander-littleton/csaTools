@@ -1,3 +1,6 @@
+let alphaNumArray = [];
+let numArray = [];
+
 const fileParse = function () {
   let input = document.getElementById("openFile").files[0];
   Papa.parse(input, {
@@ -30,8 +33,6 @@ const createRow = (name, exportable) => ({
 });
 
 const main = function (parsedData, header = true) {
-  let alphaNumArray = [];
-  let numArray = [];
   let alphaNumRow = createRow("Alphanumeric", true);
   let justNumRow = createRow("Just Numbers", true);
   let totalsRow = createRow("All Terms", false);
