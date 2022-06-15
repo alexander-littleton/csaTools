@@ -93,7 +93,7 @@ const transformQueryData = (extractedQueryData, header = true) => {
     alphanumericQueryPerformance, 
     justNumbersQueryPerformance
     )
-
+  
   return {
     alphanumericRow: alphanumericQueryPerformance, 
     justNumbersRow: justNumbersQueryPerformance, 
@@ -121,39 +121,28 @@ const subtractObjectValues = (object1, object2, object3) => {
 
 const loadQueryData = (transformedQueryData) => {
   const {alphanumericRow, justNumbersRow, numberlessRow, totalRow} = transformedQueryData
+
   const alphaRow = document.getElementById("alphanumericRow");
-  const numRow = document.getElementById("justNumbersRow");
-  const nonNumRow = document.getElementById("numberlessRow");
-  const numTotalRow = document.getElementById("totalRow");
+  //i don't know if this works as intended as it might not return the values in the correct order
   const alphaNumRowValues = Object.values(alphanumericRow);
+  loadDataIntoRow(alphaRow, alphaNumRowValues)
+
+  const numRow = document.getElementById("justNumbersRow");
   const justNumRowValues = Object.values(justNumbersRow);
-  const totalsRowValues = Object.values(totalRow);
-  for (let i = 0; i < dataCellEndPosition; i++) {
-    let t1 = alphaRow.cells[i + 1];
-    let t2 = numRow.cells[i + 1];
-    let t3 = nonNumRow.cells[i + 1];
-    let t4 = numTotalRow.cells[i + 1];
-    if (i == 2 || i == 4) {
-      t1.innerText = alphaNumRowValues[i].toFixed(2);
-      t2.innerText = justNumRowValues[i].toFixed(2);
-      t4.innerText = totalsRowValues[i].toFixed(2);
-      t3.innerText = (
-        totalsRowValues[i].toFixed(2) -
-        alphaNumRowValues[i].toFixed(2) -
-        justNumRowValues[i].toFixed(2)
-      ).toFixed(2);
-    } else if (i < 5) {
-      t1.innerText = alphaNumRowValues[i];
-      t2.innerText = justNumRowValues[i];
-      t4.innerText = totalsRowValues[i];
-      t3.innerText =
-        totalsRowValues[i] - alphaNumRowValues[i] - justNumRowValues[i];
-    }
-    document.querySelectorAll("table").forEach((table) => {
-      //move this into transform
-      calculateQuotients(table);
-    });
-  }
+  loadDataIntoRow(numRow, justNumRowValues)
+
+  const nonNumRow = document.getElementById("numberlessRow");
+  const numberlessRowValues = Object.values(numberlessRow);
+  loadDataIntoRow(nonNumRow, numberlessRowValues)
+
+  const numTotalRow = document.getElementById("totalRow");
+  const totalRowValues = Object.values(totalRow);
+  loadDataIntoRow(numTotalRow, totalRowValues)
+  
+  document.querySelectorAll("table").forEach((table) => {
+    //move this into transform
+    addQuotients(table);
+  });
 };
 /**
  * 
@@ -162,49 +151,19 @@ const loadQueryData = (transformedQueryData) => {
  */
 const loadDataIntoRow = (row, data) => {
   const dataCellEndPosition = 10;
-  for (let cell=1; cell < dataCellEndPosition; cell++) {
+  for (let cell=1; cell <= dataCellEndPosition; cell++) {
     row.cells[cell].innerText = data[cell]
   }
 }
 
-const calculateQuotients = (table) => {
-  const dataCellEndPos = 10;
-  const rows = table.querySelectorAll("tr");
-  rows.forEach((row) => {
-    if (row.id != "titleRow") {
-      const cells = row.cells;
-      for (let i = 5; i < dataCellEndPos; i++) {
-        const cell = cells[i + 1];
-        if (i == 5) {
-          cell.innerText = (
-            parseFloat(cells[5].innerText) / parseFloat(cells[3].innerText)
-          ).toFixed(2);
-        } else if (i == 6) {
-          cell.innerText = (
-            parseFloat(cells[3].innerText) / parseFloat(cells[2].innerText)
-          ).toFixed(2);
-        } else if (i == 7) {
-          cell.innerText = (
-            parseFloat(cells[5].innerText) / parseFloat(cells[4].innerText)
-          ).toFixed(2);
-        } else if (i == 8) {
-          cell.innerText =
-            (
-              (parseFloat(cells[2].innerText) /
-                parseFloat(cells[1].innerText)) *
-              100.0
-            ).toFixed(2) + "%";
-        } else {
-          cell.innerText =
-            (
-              (parseFloat(cells[4].innerText) /
-                parseFloat(cells[2].innerText)) *
-              100.0
-            ).toFixed(2) + "%";
-        }
-      }
-    }
-  });
+const addQuotients = (performanceData) => {
+  const {impressions, clicks, cost, conversions, revenue} = performanceData
+  performanceData.roas = (revenue/cost).toFixed(2);
+  performanceData.avgCpc = (cost/clicks).toFixed(2);
+  performanceData.aov = (revenue/conversions).toFixed(2);
+  performanceData.ctr = (clicks/impressions).toFixed(2);
+  performanceData.cvr = (conversions/clicks).toFixed(2);
+  return performanceData
 };
 
 const downloadMatchingQueries = function (e) {
