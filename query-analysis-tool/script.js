@@ -1,12 +1,13 @@
-let alphaNumericResults = [];
-let justNumbersResults = [];
+const alphanumericTerms = new Set();
+const justNumbersTerms = new Set();
 
 
-const run = () => {
+const runQueryAnalysisFromFile = () => {
   const file = document.getElementById("openFile").files[0];
-  extractedData = extractQueryData(file);
-  //todo: figure out whether data is using header and validate header
-  main(extractedData);
+  const extractedQueryData = extractQueryData(file);
+  //todo: figure out whether data is using header and validate headers
+  const transformedQueryData = transformQueryData(extractedQueryData);
+  loadQueryData(transformedQueryData);
 }
 
 const extractQueryData = (file) => {
@@ -18,10 +19,16 @@ const extractQueryData = (file) => {
       extractedData = cleanQueryData(rawQueryData);
     },
   });
+  //This currently is undefined
   return extractedData
 };
 
-const cleanQueryData = function (rawQueryData) {
+const cleanQueryData = (rawQueryData) => {
+  // // this needs to be moved to after data is cleaned i think
+  // const expectedHeaders = ["Impressions", "Clicks", "Cost", "Conversions", "Revenue"]
+  // if (rawQueryData[0] !== expectedHeaders) {
+  //   throw new Error(`Incorrect headers used in file: ${rawQueryData[0]}`)
+  // }
   return rawQueryData.map((row) => {
     return row.map((str) => {
       return str.replace(",", "");
@@ -29,33 +36,28 @@ const cleanQueryData = function (rawQueryData) {
   });
 };
 
-const createQueryData = (name, exportable) => ({
-  name: name,
-  performanceData: {
+const createPerformanceData = () => ({
     impressions: 0,
     clicks: 0,
     cost: 0.0,
     conversions: 0.0,
     revenue: 0.0,
-  },
-  exportable: exportable,
-});
+  });
 
-const main = (parsedData, header = true) => {
-  let outputData = {
-    alphanumericRow: createQueryData("Alphanumeric", true),
-    justNumbersRow: createQueryData("Just Numbers", true),
-    totalsRow: createQueryData("All Terms", false),
-  }
-  let alphaNumericRow = outputData.alphanumericRow;
-  let justNumbersRow = outputData.justNumbersRow;
-  let totalsRow = outputData.totalsRow;
+/**
+ * @param {[string[]]} extractedQueryData 
+ * @param {Boolean} header 
+ */
+const transformQueryData = (extractedQueryData, header = true) => {
+  header ? extractedQueryData.shift() : null;
+
+  let alphanumericQueryPerformance = createPerformanceData()
+  let justNumbersQueryPerformance = createPerformanceData()
+  let totalQueryPerformance = createPerformanceData()
   
-  header ? parsedData.shift() : null;
-  
-  parsedData.forEach((row) => {
+  extractedQueryData.forEach((row) => {
     const [query, impressions, clicks, cost, conversions, revenue] = row;
-    const performanceData = {
+    const queryPerformanceData = {
       impressions: parseFloat(impressions),
       clicks: parseFloat(clicks),
       cost: parseFloat(cost),
@@ -63,57 +65,69 @@ const main = (parsedData, header = true) => {
       revenue: parseFloat(revenue),
     };
     
-    const alphaNumRegex = /\b([a-zA-Z]+\d+|\d+[a-zA-Z]+)\b/g;
-    if (alphaNumRegex.test(query)) {
-      let alphaNumMatches = query.match(alphaNumRegex);
-      alphaNumMatches.forEach((ngram) => {
-        if (alphaNumericResults.indexOf(ngram) == -1) {
-          alphaNumericResults.push(ngram);
-        }
-      });
-
-      //we don't want to push into justNumTotals by design here
-      const justNumbersRegex = /\b\d+\b/g;
-      let justNumbersMatches = query.match(justNumbersRegex);
-      if (justNumbersMatches) {
-        justNumbersMatches.forEach((ngram) => {
-          if (justNumbersResults.indexOf(ngram) == -1) {
-            justNumbersResults.push(ngram);
-          }
-        });
-      }
-      alphaNumericRow = addPerformanceData(alphaNumericRow, performanceData);
-    } else if (justNumRegex.test(query)) {
-      let justNumMatches = query.match(justNumRegex);
-      justNumMatches.forEach((term) => {
-        if (justNumbersResults.indexOf(term) == -1) {
-          justNumbersResults.push(term);
-        }
-      });
-      justNumbersRow = addPerformanceData(justNumbersRow, performanceData);
+    //example matches - "34thg2", "xrp2002"
+    const alphanumericRegEx = /\b([a-zA-Z]+\d+|\d+[a-zA-Z]+)\b/g;
+    const alphanumericMatches = query.match(alphanumericRegEx);
+    if (alphanumericMatches.length) {
+      alphanumericMatches.forEach(match => alphanumericTerms.add(match));
     }
-    totalsRow = addPerformanceData(totalsRow, performanceData);
+    alphanumericQueryPerformance = sumObjectValues(alphanumericQueryPerformance, queryPerformanceData);
+  
+    //example matches - "303", "436276"
+    const justNumbersRegex = /\b\d+\b/g;
+    const justNumbersMatches = query.match(justNumbersRegex);
+    if (justNumbersMatches.length) {
+        justNumbersMatches.forEach(match => justNumbersTerms.add(match));
+    }
+    if (alphanumericMatches.length === 0 && justNumbersMatches.length) {
+      //alphanumeric gets priority for taking the credit here since those terms typically see higher conversion likelihood
+      // TODO: put more thought into whether we actually want to give credit regardless
+      // Right now the calculation for non numbered queries depends on credit being given to one or the other
+      justNumbersQueryPerformance = sumObjectValues(justNumbersQueryPerformance, queryPerformanceData);
+    }  
+    totalQueryPerformance = sumObjectValues(totalQueryPerformance, queryPerformanceData);
   });
-  loadQueryData(alphaNumericRow, justNumbersRow, totalsRow);
+
+  const numberlessQueryPerformance = subtractObjectValues(
+    totalQueryPerformance, 
+    alphanumericQueryPerformance, 
+    justNumbersQueryPerformance
+    )
+
+  return {
+    alphanumericRow: alphanumericQueryPerformance, 
+    justNumbersRow: justNumbersQueryPerformance, 
+    numberlessRow: numberlessQueryPerformance, 
+    totalRow: totalQueryPerformance
+  }
 };
 
 //object2 has to have all object1 keys
-const addPerformanceData = function (object1, object2) {
+const sumObjectValues = (object1, object2) => {
   Object.keys(object1.performanceData).forEach((key) => {
-    object1.performanceData[key] += object2[key];
+    object1[key] += object2[key];
   });
   return object1;
 };
 
-const loadQueryData = (alphaNumericRow, justNumbersRow, totalsRow) => {
-  const alphaRow = document.getElementById("alphaRow");
-  const numRow = document.getElementById("numRow");
-  const nonNumRow = document.getElementById("nonNumRow");
+//object2 has to have all object1 keys
+const subtractObjectValues = (object1, object2, object3) => {
+  Object.keys(object1.performanceData).forEach((key) => {
+    object1[key] -= object2[key]
+    object1[key] -= object3[key]
+  });
+  return object1;
+};
+
+const loadQueryData = (transformedQueryData) => {
+  const {alphanumericRow, justNumbersRow, numberlessRow, totalRow} = transformedQueryData
+  const alphaRow = document.getElementById("alphanumericRow");
+  const numRow = document.getElementById("justNumbersRow");
+  const nonNumRow = document.getElementById("numberlessRow");
   const numTotalRow = document.getElementById("totalRow");
-  const dataCellEndPosition = 10;
-  const alphaNumRowValues = Object.values(alphaNumericRow.performanceData);
-  const justNumRowValues = Object.values(justNumbersRow.performanceData);
-  const totalsRowValues = Object.values(totalsRow.performanceData);
+  const alphaNumRowValues = Object.values(alphanumericRow);
+  const justNumRowValues = Object.values(justNumbersRow);
+  const totalsRowValues = Object.values(totalRow);
   for (let i = 0; i < dataCellEndPosition; i++) {
     let t1 = alphaRow.cells[i + 1];
     let t2 = numRow.cells[i + 1];
@@ -136,21 +150,31 @@ const loadQueryData = (alphaNumericRow, justNumbersRow, totalsRow) => {
         totalsRowValues[i] - alphaNumRowValues[i] - justNumRowValues[i];
     }
     document.querySelectorAll("table").forEach((table) => {
+      //move this into transform
       calculateQuotients(table);
     });
   }
 };
+/**
+ * 
+ * @param {HTMLTableRowElement} row 
+ * @param {number[]} data 
+ */
+const loadDataIntoRow = (row, data) => {
+  const dataCellEndPosition = 10;
+  for (let cell=1; cell < dataCellEndPosition; cell++) {
+    row.cells[cell].innerText = data[cell]
+  }
+}
 
-const calculateQuotients = function (table) {
+const calculateQuotients = (table) => {
   const dataCellEndPos = 10;
   const rows = table.querySelectorAll("tr");
   rows.forEach((row) => {
-    row.id;
     if (row.id != "titleRow") {
       const cells = row.cells;
       for (let i = 5; i < dataCellEndPos; i++) {
         const cell = cells[i + 1];
-        cell.innerText;
         if (i == 5) {
           cell.innerText = (
             parseFloat(cells[5].innerText) / parseFloat(cells[3].innerText)
@@ -183,14 +207,14 @@ const calculateQuotients = function (table) {
   });
 };
 
-const download = function (e) {
+const downloadMatchingQueries = function (e) {
   let array;
   switch (e.currentTarget.downloadParam) {
     case "alphaNumeric":
-      array = alphaNumericResults;
+      array = alphanumericTerms;
       break;
     case "numeric":
-      array = justNumbersResults;
+      array = justNumbersTerms;
       break;
     default:
   }
@@ -203,11 +227,8 @@ const download = function (e) {
 
   link.click();
 };
-
 document.getElementById("submitFile").addEventListener("click", extractQueryData);
-document
-  .getElementById("alphaNumericDownload")
-  .addEventListener("click", download);
+document.getElementById("alphaNumericDownload").addEventListener("click", downloadMatchingQueries);
 document.getElementById("alphaNumericDownload").downloadParam = "alphaNumeric";
-document.getElementById("numericDownload").addEventListener("click", download);
+document.getElementById("numericDownload").addEventListener("click", downloadMatchingQueries);
 document.getElementById("numericDownload").downloadParam = "numeric";
