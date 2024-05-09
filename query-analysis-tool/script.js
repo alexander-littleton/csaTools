@@ -185,7 +185,7 @@ const download = function (e) {
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
   link.setAttribute("download", `${e.currentTarget.downloadParam}.csv`);
-  document.body.appendChild(link); // Required for FF
+  document.body.appendChild(link); // Because html only allows file downloads from links
 
   link.click();
 };
