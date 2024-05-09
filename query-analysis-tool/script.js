@@ -2,11 +2,11 @@ let alphaNumArray = [];
 let numArray = [];
 
 const fileParse = function () {
-  let input = document.getElementById("openFile").files[0];
+  let input = document.getElementById("open-file").files[0];
   Papa.parse(input, {
     complete: function (results, file) {
       "Parsing complete", results, file;
-      const data = results["data"];
+      const data = results.data;
       main(cleanData(data));
     },
   });
@@ -190,7 +190,7 @@ const download = function (e) {
   link.click();
 };
 
-document.getElementById("submitFile").addEventListener("click", fileParse);
+document.getElementById("open-file").addEventListener("change", fileParse);
 document
   .getElementById("alphaNumericDownload")
   .addEventListener("click", download);

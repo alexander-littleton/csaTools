@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <link rel="stylesheet" href="qaToolStyle.css">
-    <title>Alphanumeric Query Analysis Tool</title>
+    <title>Alphanumeric Query Analysis</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-168021019-1"></script>
     <script>
@@ -13,14 +13,17 @@
 </script>
 </head>
 <body>
-    <h1>Query Analysis Tool</h1>
-    <input type="file" id="openFile" accept=".csv"/>
-    <div id='textInputContainer'>
-        <textarea id="termsInput" placeholder="Paste top terms here"></textarea>
+    <div class="description-wrapper">
+    <h1>Alphanumeric Query Analysis Tool</h1>
+        <p>This web app was originally built for analyzing Google Ads query data. Typically queries containing alphanumeric terms like "XRM2400" see a higher purchase likelihood (conversion rate or CVR) and return on ad spend (ROAS) typically because they refer to specific model numbers. This tool allows the user to analyze search query data and to export a list of all these alphanumeric terms for the sake of targeting them in ad campaigns.</p>
     </div>
-    <button type="submit" id='submitFile'>Submit</button>
+    <div>
+        <label for="open-file">
+            Upload a CSV ⬆
+        </label>
+        <input type="file" id="open-file" accept=".csv" aria-label="Search term data csv uploads"/>
+    </div>
     <div id='tableWrapper'>
-        <h2>Alphanumeric</h2>
         <table id="numberTable" class='qaTable'>
             <thead>
                 <tr id='titleRow' class='headerRow'>
@@ -51,7 +54,7 @@
                     <td>0</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><button id='alphaNumericDownload'>Download</button></td>
+                    <td><button id='alphaNumericDownload' aria-label="Download alphanumeric terms">Download ⬇</button></td>
                 </tr>
                 <tr id="numRow">
                     <td>Just Numbers</td>
@@ -65,7 +68,7 @@
                     <td>0</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><button id="numericDownload">Download</button></td>
+                    <td><button id="numericDownload" aria-label="Download terms that only include numbers">Download ⬇</button></td>
                 </tr>
                 <tr id="nonNumRow">
                     <td>Non-Numbered</td>
@@ -98,13 +101,14 @@
             </tbody>
         </table>
     </div>
-    <h3>How to use</h3>
-    <p>Format your .csv file so that the data is in the following order:<br>
-        <strong>Search terms | Impressions | Clicks | Cost | Conversions | Conversion Value</strong><br>
-        Delete any extra rows above your headers/data (Headers are optional)<br>
-        Once your .csv file is formatted, go ahead and upload it then click submit to run.<br>
-    </p>
-    <div></div>
+    <div>
+        <h3>How to use</h3>
+        <p>Format your .csv file so that the data is in the following order:<br>
+            <strong>Search terms | Impressions | Clicks | Cost | Conversions | Conversion Value</strong><br>
+            Delete any extra rows above your headers/data (Headers are optional)<br>
+            Once your .csv file is formatted, go ahead and upload it then click analyze to run.<br>
+        </p>
+    </div>
     <a href="https://docs.google.com/spreadsheets/d/16Js7QuY0vs1vStBRIfedz-mwtx-dpjnghXJtZp9fGoA/edit?usp=sharing">Dummy Data</a>
 </body>
 <footer>

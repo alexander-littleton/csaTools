@@ -1,61 +1,75 @@
 html {
-    height: 100%;
-    background-color: rgb(230, 230, 230);
+  height: 100%;
+  background-color: rgb(230, 230, 230);
 }
 
 body {
-    text-align: center;
-    font-family: 'Glober Regular', sans-serif;
-    font-style: normal;
-    font-weight: normal;
+  text-align: center;
+  font-family: "Glober Regular", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
 }
-th {
-    border: 1px solid gray;
+th,
+td {
+  border: 0.5px solid gray;
+  padding: 16px;
+  font-size: medium;
 }
 
-table{
-    margin: auto;
-    border-collapse: unset;
-    border-spacing: 0;
-    white-space: normal;
+table {
+  margin: auto;
+  border-collapse: unset;
+  border-spacing: 0;
+  white-space: normal;
 }
 td {
-    border: 1px solid gray;
-    padding: 3px;
-    font-size: 14px;
+  background-color: white;
 }
 
 .tableWrapper {
-    align-items: center;
+  align-items: center;
 }
-.headerRow{
-    height: 30px;
-    background-color: rgb(25, 57, 76);
-    color: white;
-    font-size: 14px;
+.headerRow {
+  height: 30px;
+  background-color: rgb(25, 57, 76);
+  color: white;
+  font-size: 14px;
 }
 
-input {
-    color: WHITE;
-    background-color: rgb(25, 57, 76); 
-    border: 1px solid gray;
+input[type="file"] {
+  display: none;
 }
 
 .buttonWrapper {
-    text-align: left;
-    width: 95%;
-    margin: auto;
-}
-
-#textInputContainer {
-    display : none;
+  text-align: left;
+  width: 95%;
+  margin: auto;
 }
 
 p {
-    line-height: 150%;
-    text-align: center;
+  line-height: 150%;
+  text-align: center;
 }
 
-td:first-child{
-    font-weight: bold;
+td:first-child {
+  font-weight: bold;
+}
+
+.description-wrapper {
+  width: 800px;
+}
+
+button,
+label {
+  padding: 6px 12px;
+  font-size: medium;
+  border: none;
+  background-color: rgb(25, 57, 76);
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
 }
