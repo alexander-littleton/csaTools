@@ -75,7 +75,7 @@ const buildTable = function (table) {
 
   container.append(
     $(
-      `<h2><span class='editable'>${table.name}</span><img src='assets/editPencil.png' class='editPencil'></h2>`
+      `<h2><span class='editable'>${table.name}</span><img src='../assets/editPencil.png' class='editPencil'></h2>`
     )
   );
   container.append(
@@ -172,13 +172,13 @@ const buildTable = function (table) {
     if (clmcount != 0) {
       $(`.t${tableCount}HeaderRow`).append(
         $(
-          `<th class="column"><span class='editable'>${e}</span><img src='assets/editPencil.png' class='editPencil'><img src="assets/redX.png" class="redX delColumn"></th>`
+          `<th class="column"><span class='editable'>${e}</span><img src='../assets/editPencil.png' class='editPencil'><img src="../assets/redX.png" class="redX delColumn"></th>`
         )
       );
     } else {
       $(`.t${tableCount}HeaderRow`).append(
         $(
-          `<th class="column"><span class='editable'>${e}</span><img src='assets/editPencil.png' class='editPencil'></th>`
+          `<th class="column"><span class='editable'>${e}</span><img src='../assets/editPencil.png' class='editPencil'></th>`
         )
       );
     }
@@ -189,7 +189,7 @@ const buildTable = function (table) {
   $(`.t${tableCount}HeaderRow`).append($('<th class="column">Select All</th>'));
   $(`.t${tableCount}HeaderRow`).append(
     $(
-      '<th class="delRowHeader"><img src="assets/redX.png" class="redX delTable"></th>'
+      '<th class="delRowHeader"><img src="../assets/redX.png" class="redX delTable"></th>'
     )
   );
   $(`#t${tableCount}`).append($(`<tbody id="t${tableCount}Body">`));
@@ -208,7 +208,6 @@ const buildTable = function (table) {
 };
 //end Build Table
 
-//Add Row
 const addRow = function (rowData, tableID, notify = false) {
   const columnCount = $(`#t${tableID}Header tr th`).length;
   $(`#t${tableID}Body`).append($(`<tr class='t${tableID}row'>`));
@@ -225,18 +224,18 @@ const addRow = function (rowData, tableID, notify = false) {
       );
     } else if (i === columnCount - 1) {
       $(`.t${tableID}row:last`).append(
-        `<td class='t${tableID}cell delRow'><img src='assets/redX.png' class='redX'></td>`
+        `<td class='t${tableID}cell delRow'><img src='../assets/redX.png' class='redX'></td>`
       );
     } else if (i != 0) {
       $(`.t${tableID}row:last`).append(
-        `<td class='t${tableID}cell'><span class='editable'>${item}</span><img src='assets/editPencil.png' class='editPencil'></td>`
+        `<td class='t${tableID}cell'><span class='editable'>${item}</span><img src='../assets/editPencil.png' class='editPencil'></td>`
       );
       $(`.t${tableID}cell:last`).append(
         `<input type='checkbox' class='t${tableID}Checkbox'>`
       );
     } else {
       $(`.t${tableID}row:last`).append(
-        `<td class='t${tableID}cell'><span class='editable'>${item}</span><img src='assets/editPencil.png' class='editPencil'></td>`
+        `<td class='t${tableID}cell'><span class='editable'>${item}</span><img src='../assets/editPencil.png' class='editPencil'></td>`
       );
     }
   }
@@ -246,7 +245,6 @@ const addRow = function (rowData, tableID, notify = false) {
   }
   buildLocalDataObj();
 };
-//end Add Row
 
 //--->make cells and column text editable > start
 let previousString = "";
@@ -369,14 +367,14 @@ $(document).on("click", ".addColumn", function () {
   const headerCell =
     `<th class="column">` +
     `<span class='editable'>New Column</span>` +
-    `<img src='assets/editPencil.png' class='editPencil'>` +
-    `<img src="assets/redX.png" class="redX delColumn">` +
+    `<img src='../assets/editPencil.png' class='editPencil'>` +
+    `<img src="../assets/redX.png" class="redX delColumn">` +
     `</th>`;
 
   const bodyCell =
     `<td>` +
     `<span class='editable'>--</span>` +
-    `<img src='assets/editPencil.png' class='editPencil'>` +
+    `<img src='../assets/editPencil.png' class='editPencil'>` +
     `<input type='checkbox' class='t${tableID}Checkbox'>` +
     `</td>`;
 
