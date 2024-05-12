@@ -80,7 +80,7 @@ const main = function (parsedData, header = true) {
     }
     totalsRow = addPerformanceData(totalsRow, performanceData);
   });
-  genTable(alphaNumRow, justNumRow, totalsRow);
+  populateTable(alphaNumRow, justNumRow, totalsRow);
 };
 
 //object2 has to have all object1 keys
@@ -91,7 +91,7 @@ const addPerformanceData = function (object1, object2) {
   return object1;
 };
 
-const genTable = (alphaNumRow, justNumRow, totalsRow) => {
+const populateTable = (alphaNumRow, justNumRow, totalsRow) => {
   const alphaRow = document.getElementById("alphaRow");
   const numRow = document.getElementById("numRow");
   const nonNumRow = document.getElementById("nonNumRow");
@@ -121,13 +121,12 @@ const genTable = (alphaNumRow, justNumRow, totalsRow) => {
       t3.innerText =
         totalsRowValues[i] - alphaNumRowValues[i] - justNumRowValues[i];
     }
-    document.querySelectorAll("table").forEach((table) => {
-      genDividends(table);
-    });
+    const table = document.querySelector("table");
+    populateDividends(table);
   }
 };
 
-const genDividends = function (table) {
+const populateDividends = function (table) {
   const dataCellEndPos = 10;
   const rows = table.querySelectorAll("tr");
   rows.forEach((row) => {
